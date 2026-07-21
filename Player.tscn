@@ -1,0 +1,17 @@
+[gd_scene format=3 uid="uid://d4gs8xh8u23q5"]
+
+[ext_resource type="Script" uid="uid://c2kig5dgvv3hc" path="res://Player.gd" id="1_kpjcp"]
+[ext_resource type="Texture2D" uid="uid://cii47oxn4fles" path="res://Texture/bread ram ram.png" id="2_kne1u"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_f7hjq"]
+size = Vector2(63, 63)
+
+[node name="CharacterBody2D" type="CharacterBody2D" unique_id=100821035 groups=["player"]]
+script = ExtResource("1_kpjcp")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1520919455]
+scale = Vector2(0.15, 0.15)
+texture = ExtResource("2_kne1u")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=616432218]
+shape = SubResource("RectangleShape2D_f7hjq")

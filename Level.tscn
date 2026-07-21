@@ -1,0 +1,16 @@
+[gd_scene format=3 uid="uid://cj0b44d0o6nrw"]
+
+[ext_resource type="PackedScene" uid="uid://d4gs8xh8u23q5" path="res://Player.tscn" id="1_bexhn"]
+[ext_resource type="PackedScene" uid="uid://buidf0b5eua0w" path="res://Coin.tscn" id="2_t7iv1"]
+[ext_resource type="PackedScene" uid="uid://chjibx16jvo50" path="res://boss.tscn" id="3_2nifc"]
+[ext_resource type="PackedScene" uid="uid://cmy2jyheyd3mf" path="res://Joystick.tscn" id="4_wkftn"]
+
+[node name="Node2D" type="Node2D" unique_id=1414219218]
+
+[node name="CharacterBody2D" parent="." unique_id=100821035 instance=ExtResource("1_bexhn")]
+
+[node name="Area2D" parent="." unique_id=226185973 instance=ExtResource("2_t7iv1")]
+
+[node name="CharacterBody2D2" parent="." unique_id=1246946270 instance=ExtResource("3_2nifc")]
+
+[node name="CanvasLayer" parent="." unique_id=587290562 instance=ExtResource("4_wkftn")]

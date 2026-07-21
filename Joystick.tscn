@@ -1,0 +1,18 @@
+[gd_scene format=3 uid="uid://cmy2jyheyd3mf"]
+
+[ext_resource type="Script" uid="uid://clnitqxdwc5fm" path="res://joystick.gd" id="1_ax4k2"]
+
+[node name="CanvasLayer" type="CanvasLayer" unique_id=587290562]
+script = ExtResource("1_ax4k2")
+
+[node name="VirtualJoystick" type="VirtualJoystick" parent="." unique_id=1919242618]
+offset_left = 125.0
+offset_top = 496.0
+offset_right = 165.0
+offset_bottom = 536.0
+joystick_size = 201.0
+tip_size = 81.0
+action_left = &"A"
+action_right = &"D"
+action_up = &"W"
+action_down = &"S"
