@@ -12,8 +12,22 @@ jobs:
       - name: Lấy mã nguồn từ GitHub
         uses: actions/checkout@v4
 
-      - name: Build Xcode Project (Kieuu.xcodeproj)
+      - name: Cài đặt Godot 4.7.1 & Export Templates
+        uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.1
+          use-dotnet: false
+          export-templates: true
+
+      - name: Tạo thư mục build
+        run: mkdir -p build/ios
+
+      - name: Xuất dự án Xcode từ Godot
+        run: godot --headless --export-release "iOS" build/ios/Kieuu.xcodeproj
+
+      - name: Build Xcode Project
         run: |
+          cd build/ios
           xcodebuild build \
             -project "Kieuu.xcodeproj" \
             -scheme "Kieuu" \
@@ -22,17 +36,17 @@ jobs:
             CODE_SIGNING_REQUIRED=NO \
             CODE_SIGNING_ALLOWED=NO \
             -sdk iphoneos \
-            CONFIGURATION_BUILD_DIR="$(pwd)/build/AppBuild"
+            CONFIGURATION_BUILD_DIR="$(pwd)/AppBuild"
 
       - name: Đóng gói thành file .ipa
         run: |
-          mkdir -p build/Payload
-          mv build/AppBuild/*.app build/Payload/
-          cd build
+          cd build/ios
+          mkdir -p Payload
+          mv AppBuild/*.app Payload/
           zip -r Kieuu.ipa Payload
 
       - name: Lưu file IPA để tải về
         uses: actions/upload-artifact@v4
         with:
           name: Kieuu-iOS-IPA
-          path: build/Kieuu.ipa
+          path: build/ios/Kieuu.ipa
