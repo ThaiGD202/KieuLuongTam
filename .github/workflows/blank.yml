@@ -12,10 +12,10 @@ jobs:
       - name: Lấy mã nguồn từ GitHub
         uses: actions/checkout@v4
 
-      - name: Cài đặt Godot 4.7.1 & Export Templates
+      - name: Cài đặt Godot 4 & Export Templates
         uses: chickensoft-games/setup-godot@v2
         with:
-          version: 4.7.1
+          version: 4.3 # Dùng bản template stable tương thích chuẩn cho Godot 4.x
           use-dotnet: false
           export-templates: true
 
