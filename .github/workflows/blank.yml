@@ -9,48 +9,30 @@ jobs:
   build-ios:
     runs-on: macos-latest
     steps:
-      - name: Lấy mã nguồn
+      - name: Lấy mã nguồn từ GitHub
         uses: actions/checkout@v4
 
-      - name: Cài đặt Godot 4.7.1 & Export Templates
-        uses: chickensoft-games/setup-godot@v2
-        with:
-          version: 4.7.1
-          use-dotnet: false
-          export-templates: true # Tải bộ Export Templates cho iOS
-
-      - name: Tạo thư mục build
-        run: mkdir -p build/ios
-
-      - name: Xuất file Xcode Project từ Godot
-        run: godot --headless --export-release "iOS" build/ios/my_game.xcodeproj
-
-      - name: Build Xcode Project (Tự động tìm file .xcodeproj)
+      - name: Build Xcode Project (Kieuu.xcodeproj)
         run: |
-          cd build/ios
-          # Tự động tìm file .xcodeproj được Godot tạo ra
-          XCODE_PROJ=$(ls -d *.xcodeproj 2>/dev/null | head -n 1)
-          
-          if [ -z "$XCODE_PROJ" ]; then
-            echo "LỖI: Không tìm thấy file .xcodeproj nào trong build/ios!"
-            ls -la
-            exit 1
-          fi
-          
-          SCHEME_NAME="${XCODE_PROJ%.xcodeproj}"
-          echo "Tìm thấy project: $XCODE_PROJ (Scheme: $SCHEME_NAME)"
-          
-          xcodebuild build -project "$XCODE_PROJ" -scheme "$SCHEME_NAME" -configuration Release CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO -sdk iphoneos CONFIGURATION_BUILD_DIR="$(pwd)/AppBuild"
+          xcodebuild build \
+            -project "Kieuu.xcodeproj" \
+            -scheme "Kieuu" \
+            -configuration Release \
+            CODE_SIGN_IDENTITY="" \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGNING_ALLOWED=NO \
+            -sdk iphoneos \
+            CONFIGURATION_BUILD_DIR="$(pwd)/build/AppBuild"
 
       - name: Đóng gói thành file .ipa
         run: |
-          cd build/ios
-          mkdir -p Payload
-          mv AppBuild/*.app Payload/
-          zip -r my_game.ipa Payload
+          mkdir -p build/Payload
+          mv build/AppBuild/*.app build/Payload/
+          cd build
+          zip -r Kieuu.ipa Payload
 
       - name: Lưu file IPA để tải về
         uses: actions/upload-artifact@v4
         with:
-          name: Game-iOS-IPA
-          path: build/ios/my_game.ipa
+          name: Kieuu-iOS-IPA
+          path: build/Kieuu.ipa
