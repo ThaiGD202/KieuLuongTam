@@ -1,0 +1,43 @@
+name: Build iOS IPA
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch: # Nút này giúp bạn có thể tự bấm chạy thủ công
+
+jobs:
+  build-ios:
+    runs-on: macos-latest
+    steps:
+      - name: Lấy mã nguồn
+        uses: actions/checkout@v4
+
+      - name: Cài đặt Godot 4.7.1
+        uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.1
+          use-dotnet: false
+
+      - name: Tạo thư mục chứa
+        run: mkdir -p build/ios
+
+      - name: Xuất file Xcode Project từ Godot
+        run: godot --headless --export-release "iOS" build/ios/my_game.xcodeproj
+
+      - name: Build Xcode Project (Bỏ qua chứng chỉ Apple)
+        run: |
+          cd build/ios
+          xcodebuild build -project my_game.xcodeproj -scheme my_game -configuration Release CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO -sdk iphoneos CONFIGURATION_BUILD_DIR="$(pwd)/AppBuild"
+
+      - name: Đóng gói thành file .ipa
+        run: |
+          cd build/ios
+          mkdir -p Payload
+          mv AppBuild/*.app Payload/
+          zip -r my_game.ipa Payload
+
+      - name: Lưu file IPA để tải về
+        uses: actions/upload-artifact@v4
+        with:
+          name: Game-iOS-IPA
+          path: build/ios/my_game.ipa
