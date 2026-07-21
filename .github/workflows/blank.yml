@@ -3,7 +3,7 @@ name: Build iOS IPA
 on:
   push:
     branches: [ "main" ]
-  workflow_dispatch: # Nút này giúp bạn có thể tự bấm chạy thủ công
+  workflow_dispatch:
 
 jobs:
   build-ios:
@@ -12,22 +12,35 @@ jobs:
       - name: Lấy mã nguồn
         uses: actions/checkout@v4
 
-      - name: Cài đặt Godot 4.7.1
+      - name: Cài đặt Godot 4.7.1 & Export Templates
         uses: chickensoft-games/setup-godot@v2
         with:
           version: 4.7.1
           use-dotnet: false
+          export-templates: true # Tải bộ Export Templates cho iOS
 
-      - name: Tạo thư mục chứa
+      - name: Tạo thư mục build
         run: mkdir -p build/ios
 
       - name: Xuất file Xcode Project từ Godot
         run: godot --headless --export-release "iOS" build/ios/my_game.xcodeproj
 
-      - name: Build Xcode Project (Bỏ qua chứng chỉ Apple)
+      - name: Build Xcode Project (Tự động tìm file .xcodeproj)
         run: |
           cd build/ios
-          xcodebuild build -project my_game.xcodeproj -scheme my_game -configuration Release CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO -sdk iphoneos CONFIGURATION_BUILD_DIR="$(pwd)/AppBuild"
+          # Tự động tìm file .xcodeproj được Godot tạo ra
+          XCODE_PROJ=$(ls -d *.xcodeproj 2>/dev/null | head -n 1)
+          
+          if [ -z "$XCODE_PROJ" ]; then
+            echo "LỖI: Không tìm thấy file .xcodeproj nào trong build/ios!"
+            ls -la
+            exit 1
+          fi
+          
+          SCHEME_NAME="${XCODE_PROJ%.xcodeproj}"
+          echo "Tìm thấy project: $XCODE_PROJ (Scheme: $SCHEME_NAME)"
+          
+          xcodebuild build -project "$XCODE_PROJ" -scheme "$SCHEME_NAME" -configuration Release CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO -sdk iphoneos CONFIGURATION_BUILD_DIR="$(pwd)/AppBuild"
 
       - name: Đóng gói thành file .ipa
         run: |
